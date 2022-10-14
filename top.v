@@ -42,10 +42,12 @@ module top
    wire [31:0]  rfdat1;
    wire [31:0]  rfdat2;
    wire [2:0]   ALU_Ctl;
+   wire alu_zero;
    wire ImmSel;
    wire Op2Sel;
    wire RegWriteEn;
    wire [6:0] opcode;
+   wire [31:0] alu_out;
 
    always begin
      PCSel = 2'b00;
@@ -114,6 +116,14 @@ module top
     .funct3(funct3),
     .funct7(funct7)
 
+  );
+
+  alu alu(
+    .alu_ctl(ALU_Ctl),
+    .a(rfdat1),
+    .b(op2),
+    .o(alu_out),
+    .zero(alu_zero)
   );
 
   // Write back mux

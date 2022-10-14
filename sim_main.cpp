@@ -64,7 +64,7 @@ int main(int argc, char** argv, char** env) {
     top->clk = 0;
 
     // Simulate until $finish
-    while (!Verilated::gotFinish() && main_time < 50) {
+    while (!Verilated::gotFinish() && main_time < 100) {
         main_time++;  // Time passes...
 
         // Toggle clocks and such
@@ -90,9 +90,9 @@ int main(int argc, char** argv, char** env) {
 #endif
 
         // Read outputs
-        VL_PRINTF("[%" VL_PRI64 "d] clk=%x rstl=%x pc=%08x instr=%08x pc_new=%08x rd=0x%x rs1=0x%x rs2=0x%x imm=0x%x\n",
+        VL_PRINTF("[%" VL_PRI64 "d] clk=%x rstl=%x pc=%08x instr=%08x pc_new=%08x rd=0x%x rs1=0x%x rs2=0x%x imm=0x%x op2=0x%x\n",
                   main_time, top->clk, top->reset_l, 
-                  top->pc,top->instr,top->pc_new, top->rd, top->rs1, top->rs2, top->imm );
+                  top->pc,top->instr,top->pc_new, top->rd, top->rs1, top->rs2, top->imm, top->op2 );
     }
 
     // Final model cleanup

@@ -7,7 +7,8 @@ module control (
     output [4:0] rs2,
     output [31:0] imm,
     output ImmSel,
-    output Op2Sel
+    output Op2Sel,
+    output RegWriteEn
 );
 
 reg [6:0] opcode;
@@ -28,7 +29,8 @@ always @ ( * ) begin
             imm[31:12] = 0;
             ImmSel = 0; // IType12
             Op2Sel = 0; // Imm
-            $display ("[%0t]  control:R type",$time);
+            RegWriteEn = 1;
+            $display ("[%0t]  control:I type",$time);
 
           end
         default:
@@ -41,10 +43,11 @@ always @ ( * ) begin
             imm = 32'hFFFFFFFF;
             ImmSel = 1;
             Op2Sel = 1; // Reg
+            RegWriteEn = 0;
             $display ("[%0t]  control:Default",$time);
           end
     endcase
-    $display("[%0t]  control clocked", $time);
+    // $display("[%0t]  control clocked", $time);
 end
 always @ (*)
     $display("[%0t]  control: instr=0x%x opcode=0x%x itype=%s funct3=0x%x rd=0x%x rs1=0x%x rs2=0x%x imm=0x%x ImmSel=%d, Op2Sel=%d", 

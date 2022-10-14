@@ -21,7 +21,8 @@ module top
    output [4:0] rd,
    output [4:0] rs1,
    output [4:0] rs2,
-   output [31:0]  imm
+   output [31:0]  imm,
+   output [31:0] op2
    );
 
    // Connect up the outputs, using some trivial logic
@@ -36,8 +37,12 @@ module top
    wire [4:0]   rs2;
    wire [31:0]  imm;
    wire [31:0]  op2;
+   wire [31:0]  wbdat;
+   wire [31:0]  rfdat1;
+   wire [31:0]  rfdat2;
    wire ImmSel;
    wire Op2Sel;
+   wire RegWriteEn;
 
    always begin
      PCSel = 2'b00;
@@ -76,15 +81,30 @@ module top
     .rs2 (rs2),
     .imm (imm),
     .ImmSel (ImmSel),
-    .Op2Sel (Op2Sel)
+    .Op2Sel (Op2Sel),
+    .RegWriteEn (RegWriteEn)
   );
 
   mux2 opmux( 
     .out (op2),
     .sel (Op2Sel),
     .a (imm),
-    .b (0)
+    .b (rfdat2)
   );
+
+  regfile regfile(
+    .clk (clk),
+    .we (RegWriteEn),
+    .rs1 (rs1),
+    .rs2 (rs2),
+    .waddr (rd),
+    .wdat (wbdat),
+    .rdat1 (rfdat1),
+    .rdat2 (rfdat2)
+  );
+
+  // Write back mux
+  assign wbdat = 0;
 
 
    // Print startup message

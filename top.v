@@ -14,29 +14,83 @@ module top
    input         fastclk,
    input         reset_l,
 
-   output [1:0]  out_small,
-   output [39:0] out_quad,
-   output [69:0] out_wide,
-   input [1:0]   in_small,
-   input [39:0]  in_quad,
-   input [69:0]  in_wide
+   // for debug
+   output [31:0] pc,
+   output [31:0] instr,
+   output [31:0] pc_new,
+   output [4:0] rd,
+   output [4:0] rs1,
+   output [4:0] rs2,
+   output [31:0]  imm
    );
 
    // Connect up the outputs, using some trivial logic
-   wire [1:0]    out_small = ~reset_l ? '0 : (in_small + 2'b1);
-   wire [39:0]   out_quad  = ~reset_l ? '0 : (in_quad + 40'b1);
-   wire [69:0]   out_wide  = ~reset_l ? '0 : (in_wide + 70'b1);
+   reg [31:0]   pc;
+   reg [31:0]   pc_new;
+   wire [31:0]   instr;
+   reg [1:0]    PCSel;
+   reg [31:0]   pc_plus4;
+   wire [4:0]   rd;
+   wire [2:0]  funct3;
+   wire [4:0]   rs1;
+   wire [4:0]   rs2;
+   wire [31:0]  imm;
+   wire [31:0]  op2;
+   wire ImmSel;
+   wire Op2Sel;
 
-   // And an example sub module. The submodule will print stuff.
-   sub sub (/*AUTOINST*/
-            // Inputs
-            .clk                        (clk),
-            .fastclk                    (fastclk),
-            .reset_l                    (reset_l));
+   always begin
+     PCSel = 2'b00;
+   end
+   always 
+     pc_plus4 = pc + 4;
+   
+   // The ROM currently contains the code
+   ROM_code rom( 
+            .out   (instr),
+            .addr  (pc),
+            .CS    (clk));
 
-   // Print some stuff as an example
+   // The program counter register
+   pcReg pcReg(
+            .reset  (!reset_l),
+            .CLK    (clk),
+            .Q      (pc),
+            .D      (pc_new));
+
+  // Program Counter MUX
+   mux4 pcMux(
+         .sel   (PCSel),
+         .out   (pc_new),
+         .a     (pc_plus4),
+         .b     (0),
+         .c     (0),
+         .d     (0));
+  // Control unit
+  control control(
+    .clk (clk),
+    .instr (instr),
+    .rd (rd),
+    .funct3 (funct3),
+    .rs1 (rs1),
+    .rs2 (rs2),
+    .imm (imm),
+    .ImmSel (ImmSel),
+    .Op2Sel (Op2Sel)
+  );
+
+  mux2 opmux( 
+    .out (op2),
+    .sel (Op2Sel),
+    .a (imm),
+    .b (0)
+  );
+
+
+   // Print startup message
    initial begin
       $display("[%0t] Model running...\n", $time);
    end
 
 endmodule
+

@@ -33,6 +33,7 @@ module top
    reg [31:0]   pc_plus4;
    wire [4:0]   rd;
    wire [2:0]  funct3;
+   wire [6:0]  funct7;
    wire [4:0]   rs1;
    wire [4:0]   rs2;
    wire [31:0]  imm;
@@ -40,9 +41,11 @@ module top
    wire [31:0]  wbdat;
    wire [31:0]  rfdat1;
    wire [31:0]  rfdat2;
+   wire [2:0]   ALU_Ctl;
    wire ImmSel;
    wire Op2Sel;
    wire RegWriteEn;
+   wire [6:0] opcode;
 
    always begin
      PCSel = 2'b00;
@@ -77,12 +80,14 @@ module top
     .instr (instr),
     .rd (rd),
     .funct3 (funct3),
+    .funct7 (funct7),
     .rs1 (rs1),
     .rs2 (rs2),
     .imm (imm),
     .ImmSel (ImmSel),
     .Op2Sel (Op2Sel),
-    .RegWriteEn (RegWriteEn)
+    .RegWriteEn (RegWriteEn),
+    .opcode (opcode)
   );
 
   mux2 opmux( 
@@ -101,6 +106,14 @@ module top
     .wdat (wbdat),
     .rdat1 (rfdat1),
     .rdat2 (rfdat2)
+  );
+
+  aluctl aluctl(
+    .ALU_Ctl( ALU_Ctl ),
+    .opcode(opcode),
+    .funct3(funct3),
+    .funct7(funct7)
+
   );
 
   // Write back mux

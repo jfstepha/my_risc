@@ -3,12 +3,14 @@ module control (
     input [31:0] instr,
     output [4:0] rd,
     output [2:0] funct3,
+    output [6:0] funct7,
     output [4:0] rs1,
     output [4:0] rs2,
     output [31:0] imm,
     output ImmSel,
     output Op2Sel,
-    output RegWriteEn
+    output RegWriteEn,
+    output [6:0] opcode
 );
 
 reg [6:0] opcode;
@@ -23,6 +25,7 @@ always @ ( * ) begin
             itype = "I";
             rd = instr[11:7];
             funct3 = instr[14:12];
+            funct7 = 7'b0000000;
             rs1 = instr[19:15];
             rs2 = 0;
             imm[11:0] = instr[31:20];
@@ -38,6 +41,7 @@ always @ ( * ) begin
             itype ="Unknown";
             rd = 5'b11111;
             funct3 = 3'b111;
+            funct7 = 7'b1111111;
             rs1 =  5'b11111;
             rs2 =  5'b11111;
             imm = 32'hFFFFFFFF;

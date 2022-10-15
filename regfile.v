@@ -22,7 +22,7 @@ end
 assign rdat1 = reg_array[rs1];
 assign rdat2 = reg_array[rs2];
 
-always @ (posedge clk) begin
+always @ (negedge clk) begin
     if (we) begin
         if (waddr > 0) begin
            reg_array[waddr] <= wdat;

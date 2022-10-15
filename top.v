@@ -37,17 +37,22 @@ module top
    wire [4:0]   rs1;
    wire [4:0]   rs2;
    wire [31:0]  imm;
+   wire [31:0]  op1;
    wire [31:0]  op2;
    wire [31:0]  wbdat;
    wire [31:0]  rfdat1;
    wire [31:0]  rfdat2;
    wire [2:0]   ALU_Ctl;
+   wire [1:0]   WBSel;
    wire alu_zero;
    wire ImmSel;
    wire Op2Sel;
+   wire Op1Sel;
    wire RegWriteEn;
    wire [6:0] opcode;
    wire [31:0] alu_out;
+   wire MemWrite;
+   wire [31:0] mem_rdata;
 
    always begin
      PCSel = 2'b00;
@@ -62,11 +67,16 @@ module top
             .CS    (clk));
 
    // The program counter register
-   pcReg pcReg(
-            .reset  (!reset_l),
-            .CLK    (clk),
-            .Q      (pc),
-            .D      (pc_new));
+   always @ (posedge clk)
+   begin
+     pc <= pc_new;
+   end
+
+//   pcReg pcReg(
+//            .reset  (!reset_l),
+//            .CLK    (clk),
+///            .Q      (pc),
+//            .D      (pc_new));
 
   // Program Counter MUX
    mux4 pcMux(
@@ -88,11 +98,20 @@ module top
     .imm (imm),
     .ImmSel (ImmSel),
     .Op2Sel (Op2Sel),
+    .Op1Sel (Op1Sel),
     .RegWriteEn (RegWriteEn),
-    .opcode (opcode)
+    .WBSel (WBSel),
+    .opcode (opcode),
+    .MemWrite(MemWrite)
+  );
+  mux2 op1mux(
+    .out(op1),
+    .sel(Op1Sel),
+    .a(pc),
+    .b(rfdat1)
   );
 
-  mux2 opmux( 
+  mux2 op2mux( 
     .out (op2),
     .sel (Op2Sel),
     .a (imm),
@@ -120,18 +139,36 @@ module top
 
   alu alu(
     .alu_ctl(ALU_Ctl),
-    .a(rfdat1),
+    .a(op1),
     .b(op2),
     .o(alu_out),
     .zero(alu_zero)
   );
 
   // Write back mux
-  assign wbdat = 0;
+  mux4 wbmux (
+    .sel(WBSel),
+    .out(wbdat),
+    .a(0),       // from Data Mem
+    .b(alu_out), // from ALU
+    .c(pc_new), // from PC
+    .d(0)        // nc 
+
+
+  );
+
+  data_mem data_mem(
+    .clk(clk),
+    .we(MemWrite),
+    .addr(alu_out),
+    .wdata(rfdat2),
+    .rdata(mem_rdata)
+  );
 
 
    // Print startup message
    initial begin
+      pc = 32'h16c;
       $display("[%0t] Model running...\n", $time);
    end
 

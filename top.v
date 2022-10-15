@@ -31,6 +31,7 @@ module top
    wire [31:0]   instr;
    reg [1:0]    PCSel;
    reg [31:0]   pc_plus4;
+   reg [31:0]   pc_branch;
    wire [4:0]   rd;
    wire [2:0]  funct3;
    wire [6:0]  funct7;
@@ -52,11 +53,11 @@ module top
    wire [6:0] opcode;
    wire [31:0] alu_out;
    wire MemWrite;
+   wire MemRdSignExtend;
    wire [31:0] mem_rdata;
+   wire [31:0] mem_rdata_extended;
 
-   always begin
-     PCSel = 2'b00;
-   end
+
    always 
      pc_plus4 = pc + 4;
    
@@ -72,18 +73,12 @@ module top
      pc <= pc_new;
    end
 
-//   pcReg pcReg(
-//            .reset  (!reset_l),
-//            .CLK    (clk),
-///            .Q      (pc),
-//            .D      (pc_new));
-
   // Program Counter MUX
    mux4 pcMux(
          .sel   (PCSel),
          .out   (pc_new),
          .a     (pc_plus4),
-         .b     (0),
+         .b     (pc_branch),
          .c     (0),
          .d     (0));
   // Control unit
@@ -102,7 +97,9 @@ module top
     .RegWriteEn (RegWriteEn),
     .WBSel (WBSel),
     .opcode (opcode),
-    .MemWrite(MemWrite)
+    .MemWrite(MemWrite),
+    .MemRdSignExtend(MemRdSignExtend),
+    .PCSel(PCSel)
   );
   mux2 op1mux(
     .out(op1),
@@ -130,11 +127,10 @@ module top
   );
 
   aluctl aluctl(
-    .ALU_Ctl( ALU_Ctl ),
+    .ALU_Ctl(ALU_Ctl),
     .opcode(opcode),
     .funct3(funct3),
     .funct7(funct7)
-
   );
 
   alu alu(
@@ -145,11 +141,18 @@ module top
     .zero(alu_zero)
   );
 
+  MemSignExtender MemSignExtender(
+    .RawMem(mem_rdata),
+    .funct3(funct3),
+    .MemRdSignExtend(MemRdSignExtend),
+    .ExtendedMem(mem_rdata_extended)
+  );
+
   // Write back mux
   mux4 wbmux (
     .sel(WBSel),
     .out(wbdat),
-    .a(0),       // from Data Mem
+    .a(mem_rdata_extended),       // from Data Mem
     .b(alu_out), // from ALU
     .c(pc_new), // from PC
     .d(0)        // nc 
@@ -163,6 +166,15 @@ module top
     .addr(alu_out),
     .wdata(rfdat2),
     .rdata(mem_rdata)
+  );
+
+  branch_logic branch_logic(
+    .d1(rfdat1),
+    .d2(rfdat2),
+    .imm(imm),
+    .pc(pc),
+    .pc_new(pc_branch),
+    .funct3(funct3)
   );
 
 

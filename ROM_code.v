@@ -2,7 +2,6 @@ module ROM_code(out, addr, CS);
 output[31:0] out;
 input[31:0] addr;
 input CS;
-reg [31:0] out;
 reg [31:0] ROM[32'h1000000:0];
 always @(posedge CS)
 begin
@@ -17,12 +16,15 @@ ROM[32'h188] <=32'he7c08093; // addi    ra,ra,-388
 ROM[32'h18c] <=32'h0000a703; // lw      a4,0(ra)
 ROM[32'h190] <=32'h00ff03b7; // lui     t2,0xff0
 ROM[32'h194] <=32'h0ff3839b; // addiw   t2,t2,255
-ROM[32'h198] <=32'h2a771663; // bne     a4,t2,80000444
+ROM[32'h198] <=32'h2a761663; // bne     a4,t2,80000444
+//ROM[32'h198] <=32'h2a771663; // bne     a4,t2,80000444
 
 
 
-out<=ROM[addr];
+//out<=ROM[addr];
 end
+assign out=ROM[addr];
+
 endmodule
 
 // a good start test might be rv32ui-p-lw

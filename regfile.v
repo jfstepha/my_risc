@@ -26,10 +26,10 @@ always @ (negedge clk) begin
     if (we) begin
         if (waddr > 0) begin
            reg_array[waddr] <= wdat;
-           $display("[%0t]  regfile: wrote 0x%x to reg 0x%x", $time, wdat, waddr);
+           //$display("[%0t]  regfile: wrote 0x%x to reg 0x%x", $time, wdat, waddr);
         end
     end
-    $display("[%0t]  regfile: read r1[0x%x]=0x%x r2[0x%x]=0x%x", $time, rs1, rdat1, rs2, rdat2 );
+    //$display("[%0t]  regfile: read r1[0x%x]=0x%x r2[0x%x]=0x%x", $time, rs1, rdat1, rs2, rdat2 );
 end
 
 endmodule

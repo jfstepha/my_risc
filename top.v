@@ -180,7 +180,7 @@ module top
 
    // Print startup message
    initial begin
-      pc = 32'h16c;
+      pc = 32'h0;
       $display("[%0t] Model running...\n", $time);
    end
 

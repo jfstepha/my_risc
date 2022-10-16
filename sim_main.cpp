@@ -64,7 +64,7 @@ int main(int argc, char** argv, char** env) {
     top->clk = 0;
 
     // Simulate until $finish
-    while (!Verilated::gotFinish() && main_time < 2000) {
+    while (!Verilated::gotFinish() && main_time < 4000) {
         main_time++;  // Time passes...
 
         // Toggle clocks and such

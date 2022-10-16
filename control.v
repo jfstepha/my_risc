@@ -133,7 +133,7 @@ always @ ( * ) begin
             funct7 = 7'b0000000;
             rs1 = instr[19:15];
             rs2 = instr[24:20];
-            imm[31:11] = imm[12] ? 21'h1fffff : 21'h0;
+            imm[31:11] = instr[31] ? 21'h1fffff : 21'h0;
             imm[12:0] = {instr[31],instr[7],instr[30:25],instr[11:8],1'b0};
             ImmSel = 0; // IType12
             Op1Sel = 1; // Reg

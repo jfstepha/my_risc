@@ -1,0 +1,32 @@
+//Disassembly of section .data:
+//
+//0000000080002000 <begin_signature>:
+// 00ff  // 80002000: .2byte	0xff
+// 00ff  // 80002002: .2byte	0xff
+//
+//0000000080002004 <tdat2>:
+// ff00  // 80002004: .2byte	0xff00
+// ff00  // 80002006: .2byte	0xff00
+//
+//0000000080002008 <tdat3>:
+// 0ff0  // 80002008: .2byte	0xff0
+// 0ff0  // 8000200a: .2byte	0xff0
+//
+//000000008000200c <tdat4>:
+// f00ff00f  // 8000200c: .4byte	0xf00ff00f
+ff // begin signature
+00
+ff
+00
+00  // tdat2 
+ff
+00
+ff
+f0 // tdat3
+0f
+f0
+0f
+0f // tdat4
+f0
+0f
+f0

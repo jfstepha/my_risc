@@ -15,7 +15,8 @@ module control (
     output [6:0] opcode,
     output MemWrite,
     output MemRdSignExtend,
-    output [1:0]PCSel
+    output [1:0]PCSel,
+    output ecall_break
 );
 
 reg [6:0] opcode;
@@ -43,6 +44,7 @@ always @ ( * ) begin
             MemWrite = 0;
             MemRdSignExtend = 1;
             PCSel = 2'h0; // next
+            ecall_break = 0;
             //$display ("[%0t]  control:I type",$time);
           end
        7'h13 :  // I type - math byte?
@@ -63,6 +65,7 @@ always @ ( * ) begin
             MemWrite = 0;
             MemRdSignExtend = 0;
             PCSel = 2'h0; // next
+            ecall_break = 0;
             //$display ("[%0t]  control:I type",$time);
           end
        7'h1b :  // I type - math word?
@@ -83,6 +86,7 @@ always @ ( * ) begin
             MemWrite = 0;
             MemRdSignExtend = 0;
             PCSel = 2'h0; // next
+            ecall_break = 0;
             //$display ("[%0t]  control:I type",$time);
           end
         7'h17 :  // U type - auipc
@@ -103,6 +107,7 @@ always @ ( * ) begin
             MemWrite = 0;
             MemRdSignExtend = 0;
             PCSel = 2'h0; // next
+            ecall_break = 0;
             //$display ("[%0t]  control:U type",$time);
           end
         7'h37 :  // U type - lui
@@ -123,6 +128,7 @@ always @ ( * ) begin
             MemWrite = 0;
             MemRdSignExtend = 0;
             PCSel = 2'h0; // next
+            ecall_break = 0;
             //$display ("[%0t]  control:U type",$time);
           end
         7'h63 :  // SB type - branch
@@ -143,6 +149,7 @@ always @ ( * ) begin
             MemWrite = 0;
             MemRdSignExtend = 0;
             PCSel = 2'h1; // branch
+            ecall_break = 0;
             //$display ("[%0t]  control:SB type",$time);
           end        
         7'h6f :  // UJ type - JAL 
@@ -167,6 +174,27 @@ always @ ( * ) begin
             MemWrite = 0;
             MemRdSignExtend = 0;
             PCSel = 2'h1; // branch
+            ecall_break = 0;
+            // $display ("[%0t]  control:SB type",$time);
+          end        
+        7'h73 :  // ecall / unimp
+          begin
+            itype = "ecall";
+            rd = 0;
+            funct3 = 3'b0;
+            funct7 = 7'b0000000;
+            rs1 = 0;
+            rs2 = 0;
+            imm = 0;
+            ImmSel = 0; // IType12
+            Op1Sel = 1; // Reg
+            Op2Sel = 1; // Reg
+            RegWriteEn = 1;
+            WBSel = 2'b10; // PC_new
+            MemWrite = 0;
+            MemRdSignExtend = 0;
+            PCSel = 2'h0; // next
+            ecall_break = instr == 32'hc0001073 ;
             // $display ("[%0t]  control:SB type",$time);
           end        
         default:
@@ -185,6 +213,7 @@ always @ ( * ) begin
             MemWrite = 0;
             MemRdSignExtend = 0;
             PCSel = 2'h0; // next
+            ecall_break = 0;
             $display ("[%0t]  control:Default",$time);
           end
     endcase

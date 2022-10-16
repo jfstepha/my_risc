@@ -22,7 +22,8 @@ module top
    output [4:0] rs1,
    output [4:0] rs2,
    output [31:0]  imm,
-   output [31:0] op2
+   output [31:0] op2,
+   output ecall_break
    );
 
    // Connect up the outputs, using some trivial logic
@@ -99,7 +100,8 @@ module top
     .opcode (opcode),
     .MemWrite(MemWrite),
     .MemRdSignExtend(MemRdSignExtend),
-    .PCSel(PCSel)
+    .PCSel(PCSel),
+    .ecall_break(ecall_break)
   );
   mux2 op1mux(
     .out(op1),

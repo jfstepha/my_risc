@@ -1,6 +1,6 @@
 module branch_logic (
-    input [31:0] d1,
-    input [31:0] d2,
+    input signed [31:0] d1,
+    input signed [31:0] d2,
     input [31:0] imm,
     input [31:0] pc,
     input [2:0] funct3,

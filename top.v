@@ -44,7 +44,7 @@ module top
    wire [31:0]  wbdat;
    wire [31:0]  rfdat1;
    wire [31:0]  rfdat2;
-   wire [2:0]   ALU_Ctl;
+   wire [3:0]   ALU_Ctl;
    wire [1:0]   WBSel;
    wire alu_zero;
    wire ImmSel;

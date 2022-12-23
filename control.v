@@ -110,6 +110,26 @@ always @ ( * ) begin
             ecall_break = 0;
             //$display ("[%0t]  control:U type",$time);
           end
+        7'h33 :  // R type - math
+          begin
+            itype = "R";
+            rd = instr[11:7];
+            funct3 = instr[14:12];
+            funct7 = instr[31:25];
+            rs1 = instr[19:15];
+            rs2 = instr[24:20];
+            imm = 0;
+            ImmSel = 0; // IType12
+            Op1Sel = 1; // Reg
+            Op2Sel = 1; // Reg
+            RegWriteEn = 1;
+            WBSel = 2'b01; // ALU
+            MemWrite = 0;
+            MemRdSignExtend = 0;
+            PCSel = 2'h0; // next
+            ecall_break = 0;
+            //$display ("[%0t]  control:U type",$time);
+          end
         7'h37 :  // U type - lui
           begin
             itype = "U";
@@ -194,7 +214,7 @@ always @ ( * ) begin
             MemWrite = 0;
             MemRdSignExtend = 0;
             PCSel = 2'h0; // next
-            ecall_break = instr == 32'hc0001073 ;
+            ecall_break = instr == 32'h00000073 ;
             // $display ("[%0t]  control:SB type",$time);
           end        
         default:

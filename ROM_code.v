@@ -6,7 +6,9 @@ input CS;
 reg [31:0] ROM[32'h1000000:0];
 
 initial begin 
+    $display("Loading program mem %s", `filename_prog);
     $readmemh(`filename_prog, ROM);
+
 end    
 
 assign out=ROM[addr>>2];

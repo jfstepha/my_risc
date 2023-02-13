@@ -15,32 +15,33 @@ module top
    input         reset_l,
 
    // for debug
-   output [31:0] pc,
+   output reg [31:0] pc,
    output [31:0] instr,
-   output [31:0] pc_new,
+   output reg [31:0] pc_new,
    output [4:0] rd,
    output [4:0] rs1,
    output [4:0] rs2,
    output [31:0]  imm,
    output [31:0] op2,
+   output [31:0] op1,
    output ecall_break
    );
 
    // Connect up the outputs, using some trivial logic
-   reg [31:0]   pc;
-   reg [31:0]   pc_new;
-   wire [31:0]   instr;
+   // reg [31:0]   pc;
+   // reg [31:0]   pc_new;
+   // wire [31:0]   instr;
    reg [1:0]    PCSel;
    reg [31:0]   pc_plus4;
    reg [31:0]   pc_branch;
-   wire [4:0]   rd;
+   //wire [4:0]   rd;
    wire [2:0]  funct3;
    wire [6:0]  funct7;
-   wire [4:0]   rs1;
-   wire [4:0]   rs2;
-   wire [31:0]  imm;
-   wire [31:0]  op1;
-   wire [31:0]  op2;
+   //wire [4:0]   rs1;
+   //wire [4:0]   rs2;
+   //wire [31:0]  imm;
+   //wire [31:0]  op1;
+   //wire [31:0]  op2;
    wire [31:0]  wbdat;
    wire [31:0]  rfdat1;
    wire [31:0]  rfdat2;

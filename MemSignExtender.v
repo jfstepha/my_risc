@@ -1,7 +1,7 @@
 module MemSignExtender( 
     input [31:0] RawMem,
     input [2:0]  funct3,
-    input MemRdSignExtend,
+    input reg MemRdSignExtend,
     output [31:0] ExtendedMem
     );
 

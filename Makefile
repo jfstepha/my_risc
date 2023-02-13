@@ -51,6 +51,8 @@ VERILATOR_FLAGS += --coverage
 #VERILATOR_FLAGS += --debug
 # Add this trace to get a backtrace in gdb
 #VERILATOR_FLAGS += --gdbbt
+# for fault injection:
+#VERILATOR_FLAGS += -fi
 
 ######################################################################
 default: run

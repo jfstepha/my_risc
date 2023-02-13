@@ -1,25 +1,25 @@
 module control (
     input clk, 
     input [31:0] instr,
-    output [4:0] rd,
-    output [2:0] funct3,
+    output reg [4:0] rd,
+    output reg [2:0] funct3,
     output [6:0] funct7,
-    output [4:0] rs1,
+    output reg [4:0] rs1,
     output [4:0] rs2,
     output [31:0] imm,
     output ImmSel,
     output Op1Sel,
     output Op2Sel,
     output RegWriteEn,
-    output [1:0] WBSel,
-    output [6:0] opcode,
+    output reg[1:0] WBSel,
+    output reg [6:0] opcode,
     output MemWrite,
     output MemRdSignExtend,
     output [1:0]PCSel,
     output ecall_break
 );
 
-reg [6:0] opcode;
+// reg [6:0] opcode;
 string itype;
 
 always @ ( * ) begin
